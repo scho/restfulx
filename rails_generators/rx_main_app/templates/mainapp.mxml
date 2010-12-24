@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:<%= application_tag %>  xmlns:fx="http://ns.adobe.com/mxml/2009" 
-  xmlns:s="library://ns.adobe.com/flex/spark" 
-  xmlns:mx="library://ns.adobe.com/flex/mx"
+<mx:<%= application_tag %> xmlns:mx="http://www.adobe.com/2006/mxml"
   xmlns:generated="<%= base_package %>.views.generated.*"
-  preloaderChromeColor="#EBF4FF" 
-  width="1024" height="768"
-  initialize="init()">
-	<s:layout>
-		<s:VerticalLayout paddingTop="6" paddingLeft="6" paddingRight="6" paddingBottom="6"/>
-	</s:layout>
-  <fx:Script>
+  paddingBottom="8" paddingLeft="8" paddingRight="8" paddingTop="8"
+  layout="horizontal" styleName="plain" initialize="init()">
+  <mx:Script>
     <![CDATA[
 <% if use_air -%>
 <% if distributed -%>
@@ -30,17 +24,17 @@
 <% if distributed -%>
 
       [Bindable]
-      protected var socketMonitor:SocketMonitor;
+      private var socketMonitor:SocketMonitor;
 
       [Bindable]
-      protected var online:Boolean;
+      private var online:Boolean;
 
       [Bindable]
-      protected var syncStatus:String;
+      private var syncStatus:String;
 <% end -%>
 <% end -%>
 
-      protected function init():void {
+      private function init():void {
 <% if use_air -%>
 <% if distributed -%>
         Rx.httpRootUrl = "http://localhost:3000/";
@@ -72,23 +66,23 @@
 <% if use_air -%>
 <% if distributed -%>
 
-      protected function onPushStart(event:Event):void {
+      private function onPushStart(event:Event):void {
         syncStatus = "Pushing changes ...";
       }
 
-      protected function onPushEnd(event:Event):void {
+      private function onPushEnd(event:Event):void {
         syncStatus = "Push complete.";
       }
 
-      protected function onPullStart(event:Event):void {
+      private function onPullStart(event:Event):void {
         syncStatus = "Pulling data...";
       }
 
-      protected function onPullEnd(event:Event):void {
+      private function onPullEnd(event:Event):void {
         syncStatus = "Pull complete.";
       }
 
-      protected function onNetworkStatusChange(event:StatusEvent):void {
+      private function onNetworkStatusChange(event:StatusEvent):void {
         online = (socketMonitor.available) ? true : false;
   
         if (online) {
@@ -98,7 +92,7 @@
         }
       }
 
-      protected function getCurrentProviderName(id:int):String {
+      private function getCurrentProviderName(id:int):String {
         switch (id) {
           case XMLHTTPServiceProvider.ID:
             return "Rails";
@@ -111,36 +105,25 @@
 <% end -%>
 <% end -%>
     ]]>
-  </fx:Script>
+  </mx:Script>
 <% if use_air -%>
 <% if distributed -%>
-	<s:HGroup width="100%" verticalAlign="middle" >
-		<s:Label text="Current Provider: {getCurrentProviderName(Rx.defaultServiceId)}"/>
-		<s:Label text="Status: {online ? 'Online' : 'Offline' }"/>
-		<s:HGroup>
-			<s:Button label="Push" click="{Rx.changes.push()}" enabled="{online}"/>
-			<s:Button label="Pull" click="{Rx.changes.pull()}" enabled="{online}"/>
-		</s:HGroup>
-		<s:Label text="{syncStatus}"/> 
-		<mx:Spacer width="100%"/>
-		<s:Label text="by RestfulX"/>
-	</s:HGroup>
-	<s:Line  width="100%">
-		<s:stroke>
-			<s:SolidColorStroke weight="1" color="black" caps="square" alpha="0.4" />
-		</s:stroke>
-	</s:Line>
+  <mx:VBox height="100%">
+    <mx:Label text="Current Provider: {getCurrentProviderName(Rx.defaultServiceId)}"/>
+    <mx:Label text="Status: {online ? 'Online' : 'Offline' }"/>
+    <mx:HBox>
+      <mx:Button label="Push" click="{Rx.changes.push()}" enabled="{online}"/>
+      <mx:Button label="Pull" click="{Rx.changes.pull()}" enabled="{online}"/>
+    </mx:HBox>
+    <mx:Label text="{syncStatus}"/>
+  </mx:VBox>
 <% end -%>
 <% end -%>
-<s:HGroup width="100%" height="100%">
-  <mx:LinkBar dataProvider="{mainViewStack}" direction="vertical" borderStyle="solid" backgroundColor="#EEEEEE" height="100%"/>
+  <mx:LinkBar dataProvider="{mainViewStack}" direction="vertical" borderStyle="solid" backgroundColor="#EEEEEE"/>
   <mx:ViewStack id="mainViewStack" width="100%" height="100%">
     <!-- For a simple demo, put all the components here. -->
 <% for component in component_names -%>
-	<s:NavigatorContent label="<%= component %>" width="100%" height="100%">
-    	<generated:<%= component %>/>
-	</s:NavigatorContent>
+    <generated:<%= component %>/>
 <% end -%>
   </mx:ViewStack>
-</s:HGroup>
-</s:<%= application_tag %>>
+</mx:<%= application_tag %>>
